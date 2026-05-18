@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.VisualScripting;
+
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
@@ -12,11 +13,12 @@ public class RewardScreenManager : MonoBehaviour
     public PlayerController player;
     bool isSpellCreated = false;
     Spell spell;
+    //List<Relic> relics;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame

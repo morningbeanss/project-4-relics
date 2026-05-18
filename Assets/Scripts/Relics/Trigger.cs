@@ -1,11 +1,79 @@
-public class Trigger
+using System;
+using System.Net.Security;
+
+public abstract class Trigger
 {
     public struct TriggerData
     {
         public string description;
         public string type;
         public string amount;
-        public string until;
     };
+
+    public string description;
+    public string type;
+    public string amount;
+    protected Action action;
+    public Trigger(TriggerData data)
+    {
+        description = data.description;
+        type = data.type;
+        amount = data.amount;
+    }
+
+    public abstract void LinkEvent(Action action); // ties the action member to an event in EventBus
+    public abstract void UnlinkEvent(Action action); // unties the action member to event in EventBus
     
+}
+
+public class OnTakeDamageTrigger : Trigger
+{
+    public OnTakeDamageTrigger(TriggerData data) : 
+    base(data)
+    {
+        
+    }
+    public override void LinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UnlinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class OnKillTrigger : Trigger
+{
+    public OnKillTrigger(TriggerData data) : 
+    base(data)
+    {
+        
+    }
+    public override void LinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+    public override void UnlinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class OnStandStillTrigger : Trigger
+{
+    public OnStandStillTrigger(TriggerData data) : 
+    base(data)
+    {
+        
+    }
+    public override void LinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+    public override void UnlinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
 }
