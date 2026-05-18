@@ -45,9 +45,8 @@ public static class SpellBuilder
 
     static public Spell Build(SpellCaster owner, string name)
     {
-        Spell s = new Spell(owner, baseSpells.Find( (s) => s.name == name));
-        s = ApplyModifier(owner, modifierSpells.Find((s) => s.name == "Instakillified"), s);
-        return s;
+     
+        return new Spell(owner, baseSpells.Find( (s) => s.name == name));
         // return new Spell(owner, spelldata)
         
 
