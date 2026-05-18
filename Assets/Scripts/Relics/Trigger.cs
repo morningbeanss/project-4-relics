@@ -35,7 +35,6 @@ public class OnTakeDamageTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        this.action = action;
         EventBus.Instance.OnPlayerTakeDamage += action; //i think this actually properly links it?
         //normally "action" would be a function, but here it is a variable calling to some function (i think)
 
@@ -58,11 +57,11 @@ public class OnKillTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        EventBus.Instance.OnEnemyKilled += action;
     }
     public override void UnlinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        EventBus.Instance.OnEnemyKilled -= action;
     }
 }
 
@@ -75,10 +74,13 @@ public class OnStandStillTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        EventBus.Instance.OnPlayerStill += action;
+        
+        //is smth like this needed? should this be tracking both movement & non-movement events ??
+        //EventBus.Instance.OnPlayerMove -= action;
     }
     public override void UnlinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        EventBus.Instance.OnPlayerStill -= action;
     }
 }
