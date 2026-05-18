@@ -35,12 +35,17 @@ public class OnTakeDamageTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        this.action = action;
+        EventBus.Instance.OnPlayerTakeDamage += action; //i think this actually properly links it?
+        //normally "action" would be a function, but here it is a variable calling to some function (i think)
+
+        //throw new NotImplementedException();
     }
 
     public override void UnlinkEvent(Action action)
     {
-        throw new NotImplementedException();
+        EventBus.Instance.OnPlayerTakeDamage -= action; //"unsubscribe" from it (stop doing it)
+        //throw new NotImplementedException();
     }
 }
 

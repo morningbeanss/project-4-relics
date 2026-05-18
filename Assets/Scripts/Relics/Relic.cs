@@ -1,3 +1,6 @@
+using System;
+using System.Diagnostics;
+
 public class Relic
 {
     public struct RelicData
@@ -12,6 +15,9 @@ public class Relic
     public int sprite;
     public Trigger trigger;
     public Effect effect;
+
+    //to track whether relic is alr active or not, so functions can just return instead of doing smth twice
+    private bool isActive = false; 
 
     public Relic(RelicData data)
     {
@@ -48,4 +54,30 @@ public class Relic
         }
     }
 
+    //adding functions to Relic class so a relic can be easily activated/deactivated
+    //(essentially i'm trying to tie together trigger.cs + effect.cs + eventbus.cs)
+    public void Activate()
+    {
+        if (isActive == true) return;
+
+        //if it made it past the first line, tell bool that relic is active alr
+        isActive = true;
+
+        //i (clr) got this line from deepseek cuz i didnt understand how to properly call/use effect here
+        Action effectAction = () => effect.ApplyEffect();
+
+        //this line tells the trigger to activate the specific effect
+        trigger.LinkEvent(effectAction);
+
+        //ok this line below says Debug doesnt contain a definition for log wtv im dealing w this later
+        //Debug.Log("Relic activated: " + name);
+    }
+
+    public void Deactivate()
+    {
+        if (isActive == false) return;
+        isActive = false;
+        Action effectAction = () => effect.ApplyEffect();
+        trigger.UnlinkEvent(effectAction);
+    }
 }
