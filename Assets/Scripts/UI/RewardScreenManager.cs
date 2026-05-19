@@ -15,6 +15,7 @@ public class RewardScreenManager : MonoBehaviour
     Spell spell;
     List <Relic> tempRelics;
     bool allRelicsCreated = false;
+    public List <RelicUI> relicUI;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,6 +44,11 @@ public class RewardScreenManager : MonoBehaviour
                 {
                     isSpellCreated = false;
                 }
+                if (allRelicsCreated)
+                {
+                    allRelicsCreated = false;
+                    tempRelics.Clear(); //empty list for next round 
+                }
                 rewardUI.SetActive(false);
             break;
 
@@ -59,6 +65,7 @@ public class RewardScreenManager : MonoBehaviour
 
                 }
 
+                //make smth like if wave != 0 && wave % 3 == 0 (so this stuff only shows up every 3 rounds)
                 if (!allRelicsCreated)
                 {
                     for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
@@ -77,9 +84,11 @@ public class RewardScreenManager : MonoBehaviour
                             }
                         }
                         tempRelics[i] = tempRelic;
+                        relicUI[i].
                     }
                     //after it all runs, update variable
                     allRelicsCreated = true;
+                    Debug.Log("all relics created");
                 }
                 
                 rewardUI.SetActive(true);

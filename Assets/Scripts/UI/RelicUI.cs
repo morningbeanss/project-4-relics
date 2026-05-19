@@ -29,4 +29,9 @@ public class RelicUI : MonoBehaviour
         label.text = r.GetLabel();
         highlight.SetActive(r.IsActive());
     }
+
+    public void SetRelic()
+    {
+
+    }
 }
