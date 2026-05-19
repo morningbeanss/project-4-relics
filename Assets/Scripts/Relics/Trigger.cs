@@ -68,8 +68,27 @@ public class OnKillTrigger : Trigger
     }
 }
 
+public class OnMoveTrigger : Trigger
+{
+    public OnMoveTrigger(TriggerData data) :
+    base(data)
+    {
+        
+    }
+
+    public override void LinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UnlinkEvent(Action action)
+    {
+        throw new NotImplementedException();
+    }
+}
 public class OnStandStillTrigger : Trigger
 {
+    private float timer;
     public OnStandStillTrigger(TriggerData data) : 
     base(data)
     {

@@ -25,6 +25,9 @@ public class PlayerController : MonoBehaviour
     public int manaRegen;
     public int spellPower; //i need this in Spell.cs
 
+    private bool moving = false;
+    private bool lastMove = false;
+
 
     public AudioSource source;
     public AudioClip clip;
@@ -141,6 +144,28 @@ public class PlayerController : MonoBehaviour
                 spellcaster.highlightedSpell = 3;
             }
         }
+
+        lastMove = moving;
+        if (GetComponent<Rigidbody2D>().linearVelocity.magnitude > 0)
+        {
+            moving = true;
+        }
+        else
+        {
+            moving = false;
+        }
+        if (moving != lastMove)
+        {
+            if (moving)
+            {
+                EventBus.Instance.PlayerMove();
+            }
+            else
+            {
+                EventBus.Instance.PlayerStill();
+            }
+        }
+
     }
 
     void OnAttack(InputValue value)

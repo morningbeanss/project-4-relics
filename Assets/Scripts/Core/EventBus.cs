@@ -18,6 +18,10 @@ public class EventBus
     public void DoDamage(Vector3 where, Damage dmg, Hittable target)
     {
         OnDamage?.Invoke(where, dmg, target);
+        if (target == GameManager.Instance.player.GetComponent<PlayerController>().hp)
+        {
+            OnPlayerTakeDamage?.Invoke();
+        }
     }
     // *** OUR EVENTS *** 
     // as far as I understand, none of them need any parameters
@@ -26,11 +30,6 @@ public class EventBus
     public event Action OnPlayerMove;
     public event Action OnEnemyKilled;
     public event Action OnSpellCast;
-
-    public void PlayerTakeDamage()
-    {
-        OnPlayerTakeDamage?.Invoke();
-    }
 
     public void PlayerStill()
     {

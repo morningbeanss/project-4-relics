@@ -33,7 +33,7 @@ public class GainManaEffect : Effect
 
     public override void ApplyEffect()
     {
-        
+        GameManager.Instance.player.GetComponent<PlayerController>().mana += 5;
     }
 }
 
