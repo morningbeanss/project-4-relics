@@ -18,7 +18,7 @@ public static class RelicBuilder
     //(build will be called 3 times in a row, ownedRelics shouldnt be updated during those 3 times yet
     //bc player hasnt actually selected the three. after player selects, temp one should be wiped, and selected
     //one should be officially added to ownedRelics)
-    public static List<Relic.RelicData> tempRandomSelected = new List<Relic.RelicData>();
+    //public static List<Relic.RelicData> tempRandomSelected = new List<Relic.RelicData>();
 
     static RelicBuilder()
     {
@@ -41,12 +41,8 @@ public static class RelicBuilder
 
         //randomly choose a relic from the available ones
         int randomIndex = Random.Range(0, availableRelics.Count);
-        Relic.RelicData selected = availableRelics[randomIndex];
-        //add it to temp holding variable
-        tempRandomSelected.Add(selected);
-
         //return new relic
-        return new Relic(selected);
+        return new Relic(availableRelics[randomIndex]);
     }
 
     //this is similar to the one above, but in case we want to test specific relics n not a randomly selected one
@@ -63,6 +59,7 @@ public static class RelicBuilder
         }
     }
 
+    /*
     //this to add relic to owned relic, and to wipe temporary holder (void bc i dont think a return is necessary)
     // !!!! call this wherever the button selection logic is !!!!
     public static void PlayerSelectedARelic(Relic selectedRelic)
@@ -81,8 +78,10 @@ public static class RelicBuilder
         tempRandomSelected.Clear();
     }
 
+    
     public static void ClearTemp()
     {
         tempRandomSelected.Clear();
     }
+    */
 }

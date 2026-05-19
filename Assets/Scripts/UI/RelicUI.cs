@@ -30,7 +30,7 @@ public class RelicUI : MonoBehaviour
         highlight.SetActive(r.IsActive());
     }
 
-    public void SetRelic()
+    public void SetRelic(Relic relic)
     {
 
     }

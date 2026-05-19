@@ -66,11 +66,16 @@ public class RewardScreenManager : MonoBehaviour
                 }
 
                 //make smth like if wave != 0 && wave % 3 == 0 (so this stuff only shows up every 3 rounds)
+                //add smth where game wont break if there aren't three diff relics to display (like it can display two or one as we begin to run out of options)
                 if (!allRelicsCreated)
                 {
                     for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
                     {
                         Relic tempRelic = RelicBuilder.Build();
+                        if (tempRelic == null)
+                        {
+                            break; //Build() will return null if no available/unused relics
+                        }
                         if (tempRelics.Contains(tempRelic))
                         {
                             while (tempRelics.Contains(tempRelic))
@@ -84,7 +89,7 @@ public class RewardScreenManager : MonoBehaviour
                             }
                         }
                         tempRelics[i] = tempRelic;
-                        relicUI[i].
+                        relicUI[i].SetRelic(tempRelic); //i hope this setup will work and make 3 diff active relic uis??
                     }
                     //after it all runs, update variable
                     allRelicsCreated = true;
