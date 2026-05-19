@@ -30,6 +30,7 @@ public class EventBus
     public event Action OnPlayerMove;
     public event Action OnEnemyKilled;
     public event Action OnSpellCast;
+    public event Action<Relic> OnRelicPickup;
 
     public void PlayerStill()
     {
@@ -49,6 +50,9 @@ public class EventBus
         OnSpellCast?.Invoke();
     }
 
-
+    public void RelicPickup(Relic relic)
+    {
+        OnRelicPickup?.Invoke(relic);
+    }
 
 }

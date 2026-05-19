@@ -83,4 +83,12 @@ public class Relic
         Action effectAction = () => effect.ApplyEffect();
         trigger.UnlinkEvent(effectAction);
     }
+
+    //these functions below r needed for RelicUI.cs
+    public string GetLabel()
+    {
+        return name;
+    }
+
+    public bool IsActive() { return isActive; }
 }

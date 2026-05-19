@@ -10,12 +10,15 @@ using Newtonsoft.Json;
 public static class RelicBuilder
 {
     static List<Relic.RelicData> relics; //list to hold all possible relics from json
-    static List<Relic.RelicData> ownedRelics = new List<Relic.RelicData>(); //list to hold all the relics player owns (so no dupes r presented)
+
+    //this has been replaced in PlayerController with "relics"
+    //public static List<Relic.RelicData> ownedRelics = new List<Relic.RelicData>(); //list to hold all the relics player owns (so no dupes r presented)
+
     //make a list that temporary holds relics while they're being generated??
     //(build will be called 3 times in a row, ownedRelics shouldnt be updated during those 3 times yet
     //bc player hasnt actually selected the three. after player selects, temp one should be wiped, and selected
     //one should be officially added to ownedRelics)
-    static List<Relic.RelicData> tempRandomSelected = new List<Relic.RelicData>();
+    public static List<Relic.RelicData> tempRandomSelected = new List<Relic.RelicData>();
 
     static RelicBuilder()
     {
@@ -67,7 +70,7 @@ public static class RelicBuilder
         //add to owned relics (w/ if-statement for safety)
         if (selectedData.name != null)
         {
-            ownedRelics.Add(selectedData);
+            GameManager.Instance.player.GetComponent<PlayerController>().relics.Add(selectedRelic);
             Debug.Log("Relic " + selectedData.name + " successfully added to player's ownedRelics");
         }
 

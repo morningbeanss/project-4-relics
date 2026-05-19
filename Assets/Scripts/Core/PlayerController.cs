@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour
     public int health;
     public int mana;
     public int manaRegen;
-    public int spellPower; //i need this in Spell.cs
+    public int spellPower; //i need this in Spell.c
+    public List<Relic> relics; //this replaces ownedRelics in RelicBuilder (replacing it cuz the line "player.relics.Count-1" in RelicUIManager)
 
     private bool moving = false;
     private bool lastMove = false;
