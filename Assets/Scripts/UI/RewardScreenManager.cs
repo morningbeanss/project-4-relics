@@ -13,7 +13,8 @@ public class RewardScreenManager : MonoBehaviour
     public PlayerController player;
     bool isSpellCreated = false;
     Spell spell;
-    //List<Relic> relics;
+    List <Relic> tempRelics;
+    bool allRelicsCreated = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -56,6 +57,29 @@ public class RewardScreenManager : MonoBehaviour
                     // update spellUI
                     spellUI.SetSpell(spell, 0);
 
+                }
+
+                if (!allRelicsCreated)
+                {
+                    for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
+                    {
+                        Relic tempRelic = RelicBuilder.Build();
+                        if (tempRelics.Contains(tempRelic))
+                        {
+                            while (tempRelics.Contains(tempRelic))
+                            {
+                                //retry if tempRelic alr in tempRelics (no dupes!)
+                                tempRelic = RelicBuilder.Build();
+                                if (!tempRelics.Contains(tempRelic))
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        tempRelics[i] = tempRelic;
+                    }
+                    //after it all runs, update variable
+                    allRelicsCreated = true;
                 }
                 
                 rewardUI.SetActive(true);
