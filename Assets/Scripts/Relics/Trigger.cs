@@ -23,19 +23,21 @@ public abstract class Trigger
 
     public abstract void LinkEvent(Action action); // ties the action member to an event in EventBus
     public abstract void UnlinkEvent(Action action); // unties the action member to event in EventBus
+    public void HandleAction()
+    {
+        action?.Invoke();
+    }
     
 }
 
 public class OnTakeDamageTrigger : Trigger
 {
     public OnTakeDamageTrigger(TriggerData data) : 
-    base(data)
-    {
-        
-    }
+    base(data) {}
     public override void LinkEvent(Action action)
     {
-        EventBus.Instance.OnPlayerTakeDamage += action; //i think this actually properly links it?
+        this.action = action;
+        EventBus.Instance.OnPlayerTakeDamage += HandleAction; //i think this actually properly links it?
         //normally "action" would be a function, but here it is a variable calling to some function (i think)
 
         //throw new NotImplementedException();
@@ -43,7 +45,7 @@ public class OnTakeDamageTrigger : Trigger
 
     public override void UnlinkEvent(Action action)
     {
-        EventBus.Instance.OnPlayerTakeDamage -= action; //"unsubscribe" from it (stop doing it)
+        EventBus.Instance.OnPlayerTakeDamage -= HandleAction; //"unsubscribe" from it (stop doing it)
         //throw new NotImplementedException();
     }
 }
@@ -57,11 +59,12 @@ public class OnKillTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        EventBus.Instance.OnEnemyKilled += action;
+        this.action = action;
+        EventBus.Instance.OnEnemyKilled += HandleAction;
     }
     public override void UnlinkEvent(Action action)
     {
-        EventBus.Instance.OnEnemyKilled -= action;
+        EventBus.Instance.OnEnemyKilled -= HandleAction;
     }
 }
 
@@ -74,13 +77,14 @@ public class OnStandStillTrigger : Trigger
     }
     public override void LinkEvent(Action action)
     {
-        EventBus.Instance.OnPlayerStill += action;
+        this.action = action;
+        EventBus.Instance.OnPlayerStill += HandleAction;
         
         //is smth like this needed? should this be tracking both movement & non-movement events ??
         //EventBus.Instance.OnPlayerMove -= action;
     }
     public override void UnlinkEvent(Action action)
     {
-        EventBus.Instance.OnPlayerStill -= action;
+        EventBus.Instance.OnPlayerStill -= HandleAction;
     }
 }

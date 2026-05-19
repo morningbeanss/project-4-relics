@@ -52,6 +52,7 @@ public class Relic
                 effect = new GainSpellPowerEffect(data.effect);
             break;
         }
+
     }
 
     //adding functions to Relic class so a relic can be easily activated/deactivated
@@ -65,6 +66,8 @@ public class Relic
 
         //i (clr) got this line from deepseek cuz i didnt understand how to properly call/use effect here
         Action effectAction = () => effect.ApplyEffect();
+
+        // (Calvin) I was going to do the same thing but with a lambda so same difference 
 
         //this line tells the trigger to activate the specific effect
         trigger.LinkEvent(effectAction);

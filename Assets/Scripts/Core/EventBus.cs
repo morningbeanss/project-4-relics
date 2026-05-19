@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class EventBus 
+public class EventBus
 {
     private static EventBus theInstance;
     public static EventBus Instance
@@ -15,18 +15,40 @@ public class EventBus
     }
 
     public event Action<Vector3, Damage, Hittable> OnDamage;
+    public void DoDamage(Vector3 where, Damage dmg, Hittable target)
+    {
+        OnDamage?.Invoke(where, dmg, target);
+    }
+    // *** OUR EVENTS *** 
+    // as far as I understand, none of them need any parameters
     public event Action OnPlayerTakeDamage;
     public event Action OnPlayerStill;
     public event Action OnPlayerMove;
     public event Action OnEnemyKilled;
     public event Action OnSpellCast;
-    
-    public void DoDamage(Vector3 where, Damage dmg, Hittable target)
+
+    public void PlayerTakeDamage()
     {
-        OnDamage?.Invoke(where, dmg, target);
+        OnPlayerTakeDamage?.Invoke();
     }
 
-    // We are extending here ... 
+    public void PlayerStill()
+    {
+        OnPlayerStill?.Invoke();
+    }
+
+    public void PlayerMove()
+    {
+        OnPlayerMove?.Invoke();
+    }
+    public void EnemyKilled()
+    {
+        OnEnemyKilled?.Invoke();
+    }
+    public void SpellCast()
+    {
+        OnSpellCast?.Invoke();
+    }
 
 
 
