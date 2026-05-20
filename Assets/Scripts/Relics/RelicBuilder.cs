@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 public static class RelicBuilder
 {
     static List<Relic.RelicData> AllRelics; //list to hold all possible relics from json
-
+    static List<Relic> AllRelicsNotData = new List<Relic>();
     //this has been replaced in PlayerController with "relics"
     //public static List<Relic.RelicData> ownedRelics = new List<Relic.RelicData>(); //list to hold all the relics player owns (so no dupes r presented)
 
@@ -24,6 +24,12 @@ public static class RelicBuilder
     {
         string relic_json = Resources.Load<TextAsset>("relics").text; //read json file
         AllRelics = JsonConvert.DeserializeObject<List<Relic.RelicData>>(relic_json);
+
+        //making a copy of AllRelics + converting to Relic type to make it easier to use in Build()
+        foreach (var relicData in AllRelics)
+        {
+            AllRelicsNotData.Add(new Relic(relicData));
+        }
     }
 
 
@@ -32,7 +38,7 @@ public static class RelicBuilder
     {
         var player = GameManager.Instance.player.GetComponent<PlayerController>();
         //this generates a list of all possible relics that the player DOESN'T own
-        List<Relic.RelicData> availableRelics = AllRelics.FindAll(r => !player.relics.Exists(ownedRelic => ownedRelic.name == r.name));
+        List<Relic> availableRelics = AllRelicsNotData.FindAll(r => !player.relics.Contains(r)); 
         if (availableRelics.Count == 0)
         {
             Debug.Log("out of relics! (player owns all of them!)");
@@ -42,7 +48,7 @@ public static class RelicBuilder
         //randomly choose a relic from the available ones
         int randomIndex = Random.Range(0, availableRelics.Count);
         //return new relic
-        return new Relic(availableRelics[randomIndex]);
+        return availableRelics[randomIndex];
     }
 
     //this is similar to the one above, but in case we want to test specific relics n not a randomly selected one

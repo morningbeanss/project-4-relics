@@ -47,7 +47,6 @@ public class RewardScreenManager : MonoBehaviour
                 if (allRelicsCreated)
                 {
                     allRelicsCreated = false;
-                    tempRelics.Clear(); //empty list for next round 
                 }
                 rewardUI.SetActive(false);
             break;
@@ -69,31 +68,49 @@ public class RewardScreenManager : MonoBehaviour
                 //add smth where game wont break if there aren't three diff relics to display (like it can display two or one as we begin to run out of options)
                 if (!allRelicsCreated)
                 {
-                    for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
+                    tempRelics.Clear(); //make sure list is empty
+                    for (int i = 0; i < 3 && i < relicUI.Count; i++) //3 relics need to be displayed to player for them to choose from
                     {
                         Relic tempRelic = RelicBuilder.Build();
                         if (tempRelic == null)
                         {
+                            Debug.Log("no more original relics available -rewardscreenmanager");
                             break; //Build() will return null if no available/unused relics
                         }
-                        if (tempRelics.Contains(tempRelic))
+
+                        //accidentally made the infinity loop from hell w my previous while loop
+                        int maxAttempts = 15; //adding a limiter + counter to try to avoid infinite hell death loop
+                        int attempts = 0;
+                        while (tempRelics.Contains(tempRelic) && attempts < maxAttempts)
                         {
-                            while (tempRelics.Contains(tempRelic))
+                            //retry if tempRelic alr in tempRelics (no dupes!)
+                            tempRelic = RelicBuilder.Build();
+                            if (tempRelic == null) //had a Contains() thing before, forgot to check for null (prolly where evil loop hell came from)
                             {
-                                //retry if tempRelic alr in tempRelics (no dupes!)
-                                tempRelic = RelicBuilder.Build();
-                                if (!tempRelics.Contains(tempRelic))
-                                {
-                                    break;
-                                }
+                                break;
+                            }
+                            attempts++;
+                        }
+                        
+                        if (tempRelic != null)
+                        {
+                            tempRelics.Add(tempRelic);
+                            if (relicUI[i] != null)
+                            {
+                                relicUI[i].SetRelic(tempRelic);
+                                relicUI[i].player = player;
+                                relicUI[i].index = i;
                             }
                         }
-                        tempRelics.Add(tempRelic);
-                        relicUI[i].SetRelic(tempRelic); //i hope this setup will work and make 3 diff active relic uis??
+                        else
+                        {
+                            Debug.Log("ran out of relics they null ash");
+                            break;
+                        }
                     }
                     //after it all runs, update variable
                     allRelicsCreated = true;
-                    Debug.Log("all relics created");
+                    Debug.Log("num relics created: " + tempRelics.Count);
                 }
                 
                 rewardUI.SetActive(true);

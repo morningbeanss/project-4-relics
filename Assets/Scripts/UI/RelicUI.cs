@@ -15,7 +15,7 @@ public class RelicUI : MonoBehaviour
     void Start()
     {
         // if a player has relics, this is how you *could* show them
-        Relic r = player.relics[index];
+        Relic r = player.relics[index]; //this line wont work if the relics are on rewardScreenManager, cuz then they havent been added to the player's relics yet (but idk what to do abt that rn)
         GameManager.Instance.relicIconManager.PlaceSprite(r.sprite, icon);
         
     }
