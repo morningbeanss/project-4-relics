@@ -32,6 +32,13 @@ public class RelicUI : MonoBehaviour
 
     public void SetRelic(Relic relic)
     {
-
+        if (icon != null && relic != null)
+        {
+            GameManager.Instance.relicIconManager.PlaceSprite(relic.sprite, icon);
+        }
+        if (label != null && relic != null)
+        {
+            label.text = relic.GetLabel();
+        }
     }
 }
