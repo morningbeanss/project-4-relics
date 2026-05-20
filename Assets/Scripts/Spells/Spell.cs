@@ -228,11 +228,14 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
 
         if (other.team != team)
         {
-
-
-            other.Damage(new Damage(GetDamage(), Damage.TypeFromString(modified.data.damage["type"])));
-
-
+            if (modified != null)
+            {
+                other.Damage(new Damage(GetDamage(), Damage.TypeFromString(modified.data.damage["type"])));
+            }
+            else
+            {
+                other.Damage(new Damage(GetDamage(), Damage.TypeFromString(this.data.damage["type"])));
+            }
         }
 
         //handle secondary projectiles if they exist

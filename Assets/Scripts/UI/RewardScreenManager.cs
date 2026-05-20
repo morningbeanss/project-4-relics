@@ -13,9 +13,9 @@ public class RewardScreenManager : MonoBehaviour
     public PlayerController player;
     bool isSpellCreated = false;
     Spell spell;
-    List <Relic> tempRelics;
+    public List <Relic> tempRelics = new List<Relic>();
     bool allRelicsCreated = false;
-    public List <RelicUI> relicUI;
+    public List <RelicUI> relicUI = new List<RelicUI>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -88,7 +88,7 @@ public class RewardScreenManager : MonoBehaviour
                                 }
                             }
                         }
-                        tempRelics[i] = tempRelic;
+                        tempRelics.Add(tempRelic);
                         relicUI[i].SetRelic(tempRelic); //i hope this setup will work and make 3 diff active relic uis??
                     }
                     //after it all runs, update variable
