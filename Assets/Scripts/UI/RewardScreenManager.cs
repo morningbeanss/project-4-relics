@@ -13,9 +13,19 @@ public class RewardScreenManager : MonoBehaviour
     public PlayerController player;
     bool isSpellCreated = false;
     Spell spell;
+    
+    //realized the teacher example didnt actually use relicUI on reward screen display,
+    //so im trying to add each relic's info w/ objects i made in the unity editor
+    //old stuff
     public List <Relic> tempRelics = new List<Relic>();
-    bool allRelicsCreated = false;
     public List <RelicUI> relicUI = new List<RelicUI>();
+
+    //new stuff
+    bool allRelicsCreated = false;
+    public List <GameObject> relicChoices = new List<GameObject>();
+    public List <Image> relicIcon = new List<Image>();
+    public List <TextMeshProUGUI> relicName = new List<TextMeshProUGUI>();
+    public List <TextMeshProUGUI> relicDescription = new List<TextMeshProUGUI>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -95,11 +105,17 @@ public class RewardScreenManager : MonoBehaviour
                         if (tempRelic != null)
                         {
                             tempRelics.Add(tempRelic);
+                            /*
                             if (relicUI[i] != null)
                             {
                                 relicUI[i].SetRelic(tempRelic);
                                 relicUI[i].player = player;
                                 relicUI[i].index = i;
+                            }
+                            */
+                            if (relicIcon[i] != null)
+                            {
+                                relicIcon[i]
                             }
                         }
                         else
