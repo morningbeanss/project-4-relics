@@ -89,6 +89,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
 
     public int GetProjectileSprite()
     {
+        if (modified != null) return modified.GetProjectileSprite();
         int sprite;
         int.TryParse(data.projectile["sprite"], out sprite);
         return sprite;

@@ -18,7 +18,7 @@ public class RewardScreenManager : MonoBehaviour
     //so im trying to add each relic's info w/ objects i made in the unity editor
     //old stuff
     public List <Relic> tempRelics = new List<Relic>();
-    public List <RelicUI> relicUI = new List<RelicUI>();
+    //public List <RelicUI> relicUI = new List<RelicUI>();
 
     //new stuff
     bool allRelicsCreated = false;
@@ -78,54 +78,9 @@ public class RewardScreenManager : MonoBehaviour
                 //add smth where game wont break if there aren't three diff relics to display (like it can display two or one as we begin to run out of options)
                 if (!allRelicsCreated)
                 {
-                    tempRelics.Clear(); //make sure list is empty
-                    for (int i = 0; i < 3 && i < relicUI.Count; i++) //3 relics need to be displayed to player for them to choose from
-                    {
-                        Relic tempRelic = RelicBuilder.Build();
-                        if (tempRelic == null)
-                        {
-                            Debug.Log("no more original relics available -rewardscreenmanager");
-                            break; //Build() will return null if no available/unused relics
-                        }
-
-                        //accidentally made the infinity loop from hell w my previous while loop
-                        int maxAttempts = 15; //adding a limiter + counter to try to avoid infinite hell death loop
-                        int attempts = 0;
-                        while (tempRelics.Contains(tempRelic) && attempts < maxAttempts)
-                        {
-                            //retry if tempRelic alr in tempRelics (no dupes!)
-                            tempRelic = RelicBuilder.Build();
-                            if (tempRelic == null) //had a Contains() thing before, forgot to check for null (prolly where evil loop hell came from)
-                            {
-                                break;
-                            }
-                            attempts++;
-                        }
-                        
-                        if (tempRelic != null)
-                        {
-                            tempRelics.Add(tempRelic);
-                            /*
-                            if (relicUI[i] != null)
-                            {
-                                relicUI[i].SetRelic(tempRelic);
-                                relicUI[i].player = player;
-                                relicUI[i].index = i;
-                            }
-                            */
-                            if (relicIcon[i] != null)
-                            {
-                                relicIcon[i]
-                            }
-                        }
-                        else
-                        {
-                            Debug.Log("ran out of relics they null ash");
-                            break;
-                        }
-                    }
+                    SelectThreeRelics();
                     //after it all runs, update variable
-                    allRelicsCreated = true;
+                    allRelicsCreated = true; //might need a condition check before setting dis?
                     Debug.Log("num relics created: " + tempRelics.Count);
                 }
                 
@@ -157,5 +112,58 @@ public class RewardScreenManager : MonoBehaviour
             //spellUI.gameObject.SetActive(false);
         }
         
+    }
+
+    public void SelectThreeRelics()
+    {
+        tempRelics.Clear(); //make sure list is empty
+        for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
+        {
+            Relic tempRelic = RelicBuilder.Build();
+            if (tempRelic == null)
+            {
+                Debug.Log("no more original relics available -rewardscreenmanager");
+                break; //Build() will return null if no available/unused relics
+            }
+
+            //accidentally made the infinity loop from hell w my previous while loop
+            int maxAttempts = 15; //adding a limiter + counter to try to avoid infinite hell death loop
+            int attempts = 0;
+            while (tempRelics.Contains(tempRelic) && attempts < maxAttempts)
+            {
+                //retry if tempRelic alr in tempRelics (no dupes!)
+                tempRelic = RelicBuilder.Build();
+                if (tempRelic == null) //had a Contains() thing before, forgot to check for null (prolly where evil loop hell came from)
+                {
+                    break;
+                }
+                attempts++;
+            }
+
+            Debug.Log("new relic created");
+
+            if (tempRelic != null)
+            {
+                tempRelics.Add(tempRelic); //add completed relic to temporary holder
+                //set icon, name, & description texts on Reward Screen
+                if (relicIcon[i] != null)
+                {
+                    GameManager.Instance.relicIconManager.PlaceSprite(tempRelic.sprite, relicIcon[i].GetComponent<Image>());
+                }
+                if (relicName[i] != null)
+                {
+                    relicName[i].text = tempRelic.name;
+                }
+                if (relicName[i] != null)
+                {
+                    relicDescription[i].text = tempRelic.trigger.description + " " + tempRelic.effect.description;
+                }
+            }
+            else
+            {
+                Debug.Log("ran out of relics they null ash");
+                break;
+            }
+        }
     }
 }
