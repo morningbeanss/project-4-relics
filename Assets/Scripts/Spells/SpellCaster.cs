@@ -13,7 +13,7 @@ public class SpellCaster
     //keep track of what spell is active rn; can be 0-3 for up to 4 options. player switches between them by hitting 1-4 on keyboard
     public uint highlightedSpell = 0; //0 by default bc thats what ur starting spell is
 
-    public Spell[] spells = new Spell[5]; //u can have max 4 active spells, but the 5th is when u have intermediate one as 1 more is generated each every end-of-round
+    public Spell[] spells = new Spell[4]; //u can have max 4 active spells, but the 5th is when u have intermediate one as 1 more is generated each every end-of-round
 
     //add a variable(s) to keep track of active spells?
     //3+ waves player should constantly have 4 (need to add a way to delete/swap spells)
@@ -51,7 +51,7 @@ public class SpellCaster
 
     public IEnumerator Cast(Vector3 where, Vector3 target)
     {
-        if (highlightedSpell > spells.Length - 2)
+        if (highlightedSpell > spells.Length - 1)
         {
             yield break;
         }
@@ -60,6 +60,7 @@ public class SpellCaster
             if (mana >= spells[highlightedSpell].GetManaCost() && spells[highlightedSpell].IsReady())
             {
                 mana -= spells[highlightedSpell].GetManaCost();
+                EventBus.Instance.SpellCast();
                 yield return spells[highlightedSpell].Cast(where, target, team);
             }
         }

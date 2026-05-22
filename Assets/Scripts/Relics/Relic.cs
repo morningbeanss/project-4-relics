@@ -39,6 +39,10 @@ public class Relic
                 trigger = new OnKillTrigger(data.trigger);
             break;
 
+            case "alternating-enemy-kill":
+                trigger = new OnKillTrigger(data.trigger);
+            break;
+
             // probably throw an exception if a type is not found
         }
 
@@ -50,6 +54,13 @@ public class Relic
 
             case "gain-spellpower":
                 effect = new GainSpellPowerEffect(data.effect);
+            break;
+
+            case "gain-health":
+                effect = new GainHealthEffect(data.effect);
+            break;
+            case "enemy-wipe":
+                effect = new EnemyWipeEffect(data.effect);
             break;
         }
 
@@ -78,10 +89,11 @@ public class Relic
 
         if (effect.until != null)
         {
+            Action remove = null;
             switch (effect.until)
             {
                 case "move" :
-                    Action remove = null;
+                    
                     remove = () =>
                     {
                         effect.RemoveEffect();
@@ -89,6 +101,17 @@ public class Relic
                     };
                     trigger.LinkUntil(remove);
 
+                break;
+
+                case "cast-spell":
+                
+                    remove = () =>
+                    {
+                        effect.RemoveEffect();
+                        EventBus.Instance.OnSpellCast -= remove;
+                    };
+                    EventBus.Instance.OnSpellCast += remove;
+                
                 break;
 
 

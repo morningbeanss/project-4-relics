@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
-            if (spellcaster.spells[1] != null)
+            if (spellcaster.spells[2] != null)
             {
                // Debug.Log("switching to 3");
                 spellcaster.highlightedSpell = 2;
@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Keyboard.current.digit4Key.wasPressedThisFrame)
         {
-            if (spellcaster.spells[1] != null)
+            if (spellcaster.spells[3] != null)
             {
 
                 spellcaster.highlightedSpell = 3;

@@ -26,24 +26,19 @@ public class EventBus
     // *** OUR EVENTS *** 
     // as far as I understand, none of them need any parameters
     public event Action OnPlayerTakeDamage;
-    //public event Action OnPlayerStopped; // float is the amount of time 
+    //public event Action OnPlayerStopped; // float is the amount of time
     public event Action OnPlayerStill;
     public event Action OnPlayerMove;
     public event Action OnEnemyKilled;
+    public event Action OnAlterateEnemyKilled;
     public event Action OnSpellCast;
-    public event Action<Relic> OnRelicPickup;
+    public event Action<Relic> OnRelicPickup; // ??
 
-    //public void PlayerStopped()
-    //{
-      //  OnPlayerStopped?.Invoke(); 
-    //}
+
     public void PlayerStill()
     {
-        
         OnPlayerStill?.Invoke();
-       
     }
-
     public void PlayerMove()
     {
         OnPlayerMove?.Invoke();
@@ -52,11 +47,14 @@ public class EventBus
     {
         OnEnemyKilled?.Invoke();
     }
+    public void AlternateEnemyKilled()
+    {
+        OnAlterateEnemyKilled?.Invoke();
+    }
     public void SpellCast()
     {
         OnSpellCast?.Invoke();
     }
-
     public void RelicPickup(Relic relic)
     {
         OnRelicPickup?.Invoke(relic);

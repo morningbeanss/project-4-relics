@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.UIElements;
 using RPN = RPNEvaluator.RPNEvaluator;
 
@@ -73,6 +74,7 @@ public class GainSpellPowerEffect : Effect
         var player = GameManager.Instance.player.GetComponent<PlayerController>();
         if (player != null)
         {
+            DefaultParameter = player.player.spellpower;
             string NewPower = player.player.spellpower + " " + amount + " +";
             player.UpdatePower(NewPower);
         }
@@ -86,3 +88,23 @@ public class GainSpellPowerEffect : Effect
 }
 
 //more effects here if needed ;P
+
+public class EnemyWipeEffect : Effect
+{
+    public EnemyWipeEffect(EffectData data) : base(data) {}
+
+    public override void ApplyEffect()
+    {
+        GameManager.Instance.KillAllRemainingEnemies();
+    }
+   
+}
+
+public class GainHealthEffect : Effect
+{
+    public GainHealthEffect(EffectData data) : base(data) {}
+    public override void ApplyEffect()
+    {
+        GameManager.Instance.player.GetComponent<PlayerController>().hp.hp += RPN.Evaluate(amount, GameManager.Instance.MasterVarDict);
+    }
+}

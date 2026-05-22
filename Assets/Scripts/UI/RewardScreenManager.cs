@@ -102,14 +102,16 @@ public class RewardScreenManager : MonoBehaviour
     {
         
         int i;
+        bool spellAvailable = false;
         for (i = 0; i < player.spellcaster.spells.Length - 1; i++)
         {
             if (player.spellcaster.spells[i] == null)
             {
+                spellAvailable = true;
                 break;
             }
         }
-        if (spell != null)
+        if (spell != null && spellAvailable)
         {
             Debug.Log("accepting spell");
             player.spellcaster.spells[i] = spell; // make this a new spell
@@ -160,8 +162,9 @@ public class RewardScreenManager : MonoBehaviour
                 {
                     relicName[i].text = tempRelic.name;
                 }
-                if (relicName[i] != null)
+                if (relicDescription[i] != null)
                 {
+                    
                     relicDescription[i].text = tempRelic.trigger.description + " " + tempRelic.effect.description;
                 }
             }

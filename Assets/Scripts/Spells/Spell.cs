@@ -811,7 +811,7 @@ public class Instakill : Spell // very high damage
     {
         if (!string.IsNullOrEmpty(data.damage_multiplier))
         {
-            damageMultiplier = RPN.Evaluatef(data.damage_multiplier, spellPowerDictf);
+            damageMultiplier = RPN.Evaluatef(data.damage_multiplier, GameManager.Instance.MasterVarDictF);
         }
         else
         {

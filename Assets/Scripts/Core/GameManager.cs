@@ -55,6 +55,12 @@ public class GameManager
         if (player.GetComponent<PlayerController>().hp.hp > 0)
         {
             total_enemies_killed++;
+            EventBus.Instance.EnemyKilled();
+            if (total_enemies_killed % 2 == 0)
+            {
+                EventBus.Instance.AlternateEnemyKilled();
+            }
+            
         }
     }
 

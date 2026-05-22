@@ -55,19 +55,6 @@
         }
     },
     {
-        "name": "Tomato Face",
-        "sprite": 4,
-        "trigger": {
-            "description": "When you complete a wave",
-            "type": "wave-finished"
-        },
-        "effect": {
-            "description":"7 points are added to your max health.",
-            "type": "health-max-increase",
-            "amount": "7"
-        }
-    },
-    {
         "name": "Heavenly Shield",
         "sprite": "5",
         "trigger": {
@@ -90,7 +77,7 @@
         "effect": {
             "description": "you gain 3 * wave health.",
             "type": "gain-health",
-            "amount": "3 wave *"
+            "amount": "3"
         }
     },
     {
