@@ -78,10 +78,9 @@ public class RewardScreenManager : MonoBehaviour
                     spellUI.SetSpell(spell, 0);
                     spellDesc.text = spell.GetDescription();
                 }
-                
-                //make smth like if wave != 0 && wave % 3 == 0 (so this stuff only shows up every 3 rounds)
-                //add smth where game wont break if there aren't three diff relics to display (like it can display two or one as we begin to run out of options)
-                if (!allRelicsCreated)
+
+                int currentWave = GameManager.Instance.MasterVarDict["wave"];
+                if (currentWave % 3 == 0 && currentWave > 0 && !allRelicsCreated) //make them generate only every 3rd round
                 {
                     RandomlySelectThreeRelics();
                     //after it all runs, update variable
@@ -131,6 +130,10 @@ public class RewardScreenManager : MonoBehaviour
             if (tempRelic == null)
             {
                 Debug.Log("no more original relics available -rewardscreenmanager");
+                //if spell null, just hide from view (disable) cuz no point in showing ts
+                relicIcon[i].gameObject.SetActive(false);
+                relicName[i].gameObject.SetActive(false);
+                relicDescription[i].gameObject.SetActive(false);
                 break; //Build() will return null if no available/unused relics
             }
 
