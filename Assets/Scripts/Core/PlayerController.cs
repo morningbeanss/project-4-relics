@@ -17,8 +17,7 @@ public class PlayerController : MonoBehaviour
     public Unit unit;
     public Player player;
     public Dictionary<string, Player> classes;
-    
-  
+    public List<string> classNames;
     public int sprite;
     public int health;
     public int mana;
@@ -39,13 +38,18 @@ public class PlayerController : MonoBehaviour
         //load player class json shi
         string player_json = Resources.Load<TextAsset>("classes").text;
         classes = JsonConvert.DeserializeObject<Dictionary<string, Player>>(player_json);
+
+        foreach(string key in classes.Keys)
+        {
+            classNames.Add(key);
+        }
     }
 
     public void StartLevel(string playerClassName)
     {
         //Debug.Log("PlayerController.StartLevel()");
         player = classes[playerClassName]; //set player variable to correct player class
-        Debug.Log("player manaRegen = " + player.mana_regeneration);
+   //     Debug.Log("player manaRegen = " + player.mana_regeneration);
       //  PlayerUpdate();
 
     
@@ -97,11 +101,14 @@ public class PlayerController : MonoBehaviour
         UpdatePower(null);
 
         speed = RPN.Evaluatef(player.speed, GameManager.Instance.MasterVarDict);
-
-        float ratio = (float)(health / hp.max_hp);
+        Debug.Log("Old player max hp: " + hp.max_hp);
+        Debug.Log("New player max hp: " + health);
+        Debug.Log("Old player health: " + hp.hp);
+        
+        float ratio = (float)health / (float)hp.max_hp;
         hp.max_hp = health;
-        hp.hp = (int)(hp.hp * ratio);
-
+        hp.hp = (int)((float)hp.hp * ratio);
+        Debug.Log("New player health: " + hp.hp);
         spellcaster.max_mana = mana;
         spellcaster.mana = mana;
 

@@ -11,6 +11,7 @@ using RPN = RPNEvaluator.RPNEvaluator;
 using System.Globalization;
 using TMPro;
 
+
 public class EnemySpawner : MonoBehaviour
 {
     public Image level_selector;
@@ -22,7 +23,7 @@ public class EnemySpawner : MonoBehaviour
     private List<Level> levels; //list to hold all levels after reading them from json file
     private int Wave; //changed to public so i can use in PlayerController.cs 
     private List<Enemy> enemies;
-
+    private Dictionary<string, Player> classes;
 
     int activeSpawns;
     int WavesDone; //this n ones below used in SpawnWave as post-Wave/post-game stats
@@ -49,6 +50,8 @@ public class EnemySpawner : MonoBehaviour
         string level_json = Resources.Load<TextAsset>("levels").text; //read json file
         levels = JsonConvert.DeserializeObject<List<Level>>(level_json);
 
+        
+
         int padding = 60; //space between each level button
         int startLoc = 60; //first button loc
         //list to hold all the button variables (so they can easily be set to inactive after level start)
@@ -59,7 +62,7 @@ public class EnemySpawner : MonoBehaviour
         {
             //set up button
             GameObject lvlButt = Instantiate(button, level_selector.transform);
-            lvlButt.transform.localPosition = new Vector3(0, startLoc);
+            lvlButt.transform.localPosition = new Vector3(-300, startLoc); // x is 
             lvlButt.GetComponent<MenuSelectorController>().spawner = this;
             lvlButt.GetComponent<MenuSelectorController>().SetLevel(l.name);
 
@@ -71,13 +74,21 @@ public class EnemySpawner : MonoBehaviour
         /*
         Add the class selection
         */
-
+        startLoc = 60;
+        string player_json = Resources.Load<TextAsset>("classes").text;
+        classes = JsonConvert.DeserializeObject<Dictionary<string, Player>>(player_json);
         
-        
+        foreach (string n in classes.Keys)
+        {
+            GameObject classButt = Instantiate(button, level_selector.transform);
+            classButt.transform.localPosition = new Vector3(300, startLoc);
+            classButt.GetComponent<MenuSelectorController>().SetClass(n);
+            startLoc -= padding;
+        }
 
         string enemies_json = Resources.Load<TextAsset>("enemies").text;
         enemies = JsonConvert.DeserializeObject<List<Enemy>>(enemies_json);
-        //Debug.Log("enemies: " + enemies);
+        ////Debug.Log("enemies: " + enemies);
 
         //setting up a listener for the restartButton
         if (restartButton != null)
@@ -95,7 +106,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    public void StartLevel(string levelname)
+    public void StartLevel(string levelname, string playerClassName)
     /*
     Note to self, level here means level of difficulty!!!
     Here we need to use $levelname to pass the relevent data to SpawnWave()
@@ -109,7 +120,7 @@ public class EnemySpawner : MonoBehaviour
             if (l.name == levelname)
             {
                 level = l;
-            //    Debug.Log("Waves: " + level.Waves);
+            //    //Debug.Log("Waves: " + level.Waves);
             }
         }
 
@@ -117,7 +128,7 @@ public class EnemySpawner : MonoBehaviour
         {
             // base can affect damage, hp, or speed (in theory)
             Enemy e = enemies.Find((e) => e.name == s.enemy);
-            Debug.Log("Enemy name " + e.name);
+            //Debug.Log("Enemy name " + e.name);
             
             if (s.hp != null)
             {
@@ -134,13 +145,13 @@ public class EnemySpawner : MonoBehaviour
           
 
         }
-        //Debug.Log("Level: " + level);
+        ////Debug.Log("Level: " + level);
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
-        GameManager.Instance.player.GetComponent<PlayerController>().StartLevel("mage");
+        GameManager.Instance.player.GetComponent<PlayerController>().StartLevel(playerClassName);
 
         StartCoroutine(SpawnWave());
-        //Debug.Log("Starting Wave");
+        ////Debug.Log("Starting Wave");
         UpdateWave(Wave + 1);
     }
 
@@ -148,7 +159,7 @@ public class EnemySpawner : MonoBehaviour
     {
         UpdateWave(Wave + 1);
         Wave_end_stats.text = "";
-      //  Debug.Log("Next Wave starting");
+      //  //Debug.Log("Next Wave starting");
         
         StartCoroutine(SpawnWave());
     }
@@ -219,7 +230,7 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (Spawn s in level.spawns)
         {
-            //Debug.Log("Spawn name: " + s.enemy +
+            ////Debug.Log("Spawn name: " + s.enemy +
             //"\nSpawn count");
             /*
             Without having written the real behavior, this currently
@@ -243,20 +254,20 @@ public class EnemySpawner : MonoBehaviour
             GameManager.Instance.KillAllRemainingEnemies();
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;
             GameWaveOver();
-         //   Debug.Log("GAMEOVER by DEATH trIgGerRed");
+         //   //Debug.Log("GAMEOVER by DEATH trIgGerRed");
             yield break;
         }
         if (level.name == "Endless" || Wave < level.waves)
         {
             GameManager.Instance.state = GameManager.GameState.WAVEEND;
             GameWaveOver();
-        //    Debug.Log("WAVEEND");
+        //    //Debug.Log("WAVEEND");
         }
         else
         {
             GameManager.Instance.state = GameManager.GameState.GAMEOVER;
             GameWaveOver();
-        //    Debug.Log("GAMEOVER triggered");
+        //    //Debug.Log("GAMEOVER triggered");
         }
     }
 
@@ -264,7 +275,13 @@ public class EnemySpawner : MonoBehaviour
     {
         GameManager.Instance.player.GetComponent<PlayerController>().PlayerUpdate();
         int maxHealth = GameManager.Instance.player.GetComponent<PlayerController>().hp.max_hp;
-        //Debug.Log("WAVE OVER");
+        ////Debug.Log("WAVE OVER");
+         
+        WavesDone = Wave;
+        playerHealth = GameManager.Instance.player.GetComponent<PlayerController>().hp.hp;
+        enemiesKilled = GameManager.Instance.total_enemies_killed;
+         
+        
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND)
         {
             //make a button pop up to trigger next Wave starting
@@ -272,17 +289,14 @@ public class EnemySpawner : MonoBehaviour
             WaveButt.transform.localPosition = new Vector3(0, 0);
             WaveButt.GetComponent<MenuSelectorController>().SetLevel("Next Wave");
 
-            WavesDone = Wave;
-            playerHealth = GameManager.Instance.player.GetComponent<PlayerController>().hp.hp;
-            enemiesKilled = GameManager.Instance.total_enemies_killed;
+            
+            Debug.Log("Showing wave end stats");
             Wave_end_stats.text = $"Waves Completed: {WavesDone}\nHealth: {playerHealth} / {maxHealth}\nEnemies Killed: {enemiesKilled}";
         }
         else if (GameManager.Instance.state == GameManager.GameState.GAMEOVER)
         {
             //make sure variables are updated
-            playerHealth = GameManager.Instance.player.GetComponent<PlayerController>().hp.hp;
-            WavesDone = Wave;
-            enemiesKilled = GameManager.Instance.total_enemies_killed;
+            
 
             //make a restart button
             
@@ -292,7 +306,7 @@ public class EnemySpawner : MonoBehaviour
 
             if (playerHealth <= 0) //GAMEOVER by death case (as opposed to finishing the Waves)
             {
-             //   Debug.Log("GAMEOVER due to DEATH");
+             //   //Debug.Log("GAMEOVER due to DEATH");
                 //display loser text
                 Wave_end_stats.text = $"You Died!\nWaves Completed: {WavesDone - 1}\nEnemies Killed: {enemiesKilled}";
                 //kill off remaining enemies
@@ -313,7 +327,7 @@ public class EnemySpawner : MonoBehaviour
         
         Enemy enemy_data = enemies.Find(e => e.name == spawn.enemy); // this should probably work now
         
-        ////Debug.Log("enemy data: " + enemy_data); 
+        //////Debug.Log("enemy data: " + enemy_data); 
 
         // parse spawn.location string
         SpawnPoint spawn_point = SpawnPoints[Random.Range(0, SpawnPoints.Length)]; 
@@ -345,7 +359,7 @@ public class EnemySpawner : MonoBehaviour
         Vector3 initial_position = spawn_point.transform.position + new Vector3(offset.x, offset.y, 0);
         GameObject new_enemy = Instantiate(enemy, initial_position, Quaternion.identity);
 
-        //Debug.Log("enemy sprite#: " + enemy_data.sprite);
+        ////Debug.Log("enemy sprite#: " + enemy_data.sprite);
         new_enemy.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.enemySpriteManager.Get(enemy_data.sprite); // out of bounds error?
         
         EnemyController en = new_enemy.GetComponent<EnemyController>();
@@ -397,7 +411,7 @@ public class EnemySpawner : MonoBehaviour
         List<int> sequence = s.sequence;
         sequence ??= new List<int>() { 1 };
         int delay = s.delay;
-        //Debug.Log("Spawn total is " + spawn_total);
+        ////Debug.Log("Spawn total is " + spawn_total);
 
         //[1,2,3]
         int sequenceIndex = 0;
@@ -407,7 +421,7 @@ public class EnemySpawner : MonoBehaviour
             seq += a + " ";
         }
         seq += "]";
-        //Debug.Log("Sequence = " + seq);
+        ////Debug.Log("Sequence = " + seq);
         while (spawned < spawn_total) 
         {
 
@@ -421,8 +435,8 @@ public class EnemySpawner : MonoBehaviour
 
             for (int i = 0; i < sequence[sequenceIndex]; i++)
             {
-                //Debug.Log("Spawning " + sequence[sequenceIndex] + " many enemies");
-                //Debug.Log("Enemy type: " + s.enemy);
+                ////Debug.Log("Spawning " + sequence[sequenceIndex] + " many enemies");
+                ////Debug.Log("Enemy type: " + s.enemy);
                 if (spawned < spawn_total)
                 {
                     SpawnEnemy(s); // used to be yield return
