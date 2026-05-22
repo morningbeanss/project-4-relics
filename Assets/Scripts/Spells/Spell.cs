@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+﻿
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
-using UnityEngine;
 using RPN = RPNEvaluator.RPNEvaluator;
 
 //--- NOTES SO ALL THE FILES MAKE SENSE: ---
@@ -229,14 +231,14 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
 
         if (other.team != team)
         {
-            if (modified != null)
-            {
-                other.Damage(new Damage(GetDamage(), Damage.TypeFromString(modified.data.damage["type"])));
-            }
-            else
-            {
-                other.Damage(new Damage(GetDamage(), Damage.TypeFromString(this.data.damage["type"])));
-            }
+
+
+            // Walk down to the innermost spell's damage type
+            Spell root = modified ?? this;
+            while (root.modified != null) root = root.modified;
+            other.Damage(new Damage(GetDamage(), Damage.TypeFromString(root.data.damage["type"])));
+
+
         }
 
         //handle secondary projectiles if they exist
@@ -278,9 +280,18 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
 
     void onSecondaryHit(Hittable other, Vector3 impact)
     {
+        Debug.Log("other: " + other);
+        Debug.Log("data: " + data);
+      //  Debug.Log("data.damage: " + data?.damage);
+
         if (other.team != team)
         {
-            other.Damage(new Damage(GetSecondaryDamage(), Damage.TypeFromString(data.damage["type"])));
+            Spell root = modified ?? this;
+            while (root.modified != null) root = root.modified;
+
+    //        Debug.Log("root.data.damage: " + root.data?.damage);
+            other.Damage(new Damage(GetSecondaryDamage(),
+                Damage.TypeFromString(root.data.damage["type"])));
         }
     }
 }
@@ -564,7 +575,7 @@ public class Chaos : Spell //significantly increased damage, but projectile has 
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            modified.OnHit  // this is the key — registers the wrapper's OnHit
+            this.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
@@ -624,7 +635,7 @@ public class Homing : Spell //homing projectile; decreased damage & increased ma
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            modified.OnHit  // this is the key — registers the wrapper's OnHit
+            this.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
@@ -645,6 +656,8 @@ public class Gassy : Spell //plays sound, increased damage + cooldown + mana cos
         this.WrapWithModifier(baseSpell);
 
     }
+
+    //FIGURE OUT HOW TO PLAY SOUND !!!!!!  UNGA BUNGA !!!!!!!@!!
 
     public override string GetName()
     {
@@ -704,7 +717,7 @@ public class Gassy : Spell //plays sound, increased damage + cooldown + mana cos
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            modified.OnHit  // this is the key — registers the wrapper's OnHit
+            this.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
@@ -799,17 +812,17 @@ public class Instakill : Spell // very high damage
     }
 
     public override int GetDamage()
-{
-    if (!string.IsNullOrEmpty(data.damage_multiplier))
     {
-        damageMultiplier = RPN.Evaluatef(data.damage_multiplier, spellPowerDictf);
+        if (!string.IsNullOrEmpty(data.damage_multiplier))
+        {
+            damageMultiplier = RPN.Evaluatef(data.damage_multiplier, spellPowerDictf);
+        }
+        else
+        {
+            damageMultiplier = 2f; //default fallback
+        }
+        return (int)(modified.GetDamage() * damageMultiplier);
     }
-    else
-    {
-        damageMultiplier = 2f; //default fallback
-    }
-    return (int)(modified.GetDamage() * damageMultiplier);
-}
 
     public override float GetCooldown()
     {
@@ -827,7 +840,7 @@ public class Instakill : Spell // very high damage
         //owner.playSound(clip);
         //AudioClip clip = Resources.Load<AudioClip>("children-yaysound-effect");
 
-       // owner.playSound(clip);
+        // owner.playSound(clip);
         this.team = team;
         GameManager.Instance.projectileManager.CreateProjectile(
             modified.GetProjectileSprite(),
@@ -843,12 +856,12 @@ public class Instakill : Spell // very high damage
     {
         if (other.team != team)
         {
-            AudioClip clip = Resources.Load<AudioClip>("children-yaysound-effect");
+            AudioClip clip = Resources.Load<AudioClip>("bowser_gassy_1");
             owner.playSound(clip);
             base.OnHit(other, impact);
         }
 
-        
+
     }
 
 

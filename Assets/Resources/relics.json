@@ -53,5 +53,58 @@
             "type": "gain-mana",
             "amount": "25"
         }
+    },
+    {
+        "name": "Tomato Face",
+        "sprite": 4,
+        "trigger": {
+            "description": "When you complete a wave",
+            "type": "wave-finished"
+        },
+        "effect": {
+            "description":"7 points are added to your max health.",
+            "type": "health-max-increase",
+            "amount": "7"
+        }
+    },
+    {
+        "name": "Heavenly Shield",
+        "sprite": "5",
+        "trigger": {
+            "description": "Every other time you kill an enemy",
+            "type": "alternating-enemy-kill"
+        },
+        "effect": {
+            "description": "you gain 5 * wave health. (capped at max health)",
+            "type": "gain-health",
+            "amount": "5 wave *"
+        }
+    },
+    {
+        "name": "Cross Necklace",
+        "sprite": "6",
+        "trigger": {
+            "description": "When you take damage",
+            "type": "take-damage"
+        },
+        "effect": {
+            "description": "you gain 3 * wave health.",
+            "type": "gain-health",
+            "amount": "3 wave *"
+        }
+    },
+    {
+        "name": "Hell's Crown",
+        "sprite": "9",
+        "trigger": {
+            "description": "If you don't move for 10 seconds",
+            "type": "stand-still",
+            "amount": "10"
+        },
+        "effect": {
+            "description": "every enemy currently alive instantly dies.",
+            "type": "enemy-wipe",
+            "amount": "0 "
+        }
     }
 ]
