@@ -27,14 +27,15 @@ public class GameManager
     }
 
     public GameObject player;
-    
     public ProjectileManager projectileManager;
     public SpellIconManager spellIconManager;
     public EnemySpriteManager enemySpriteManager;
     public PlayerSpriteManager playerSpriteManager;
     public RelicIconManager relicIconManager;
-
     private List<GameObject> enemies;
+    public Dictionary<string, int> MasterVarDict;
+    // wave, power, base 
+    public Dictionary<string, float> MasterVarDictF;
     public int enemy_count { get { return enemies.Count; } }
 
     //i (clr) added this one so that i can call it in GameManager & use it for wave/gameEnd stats
@@ -100,5 +101,15 @@ public class GameManager
     private GameManager()
     {
         enemies = new List<GameObject>();
+        MasterVarDict = new Dictionary<string, int>();
+        MasterVarDict.Add("wave", 0);
+        MasterVarDict.Add("power", 0);
+        MasterVarDict.Add("base", 0);
+
+        MasterVarDictF = new Dictionary<string, float>();
+        MasterVarDictF.Add("wave", 0);
+        MasterVarDictF.Add("power", 0);
+        MasterVarDictF.Add("base", 0);
+        
     }
 }

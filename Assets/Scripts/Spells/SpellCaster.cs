@@ -64,29 +64,7 @@ public class SpellCaster
             }
         }
 
-        //should only have 4 active spell slots, 5th slot is for *possible* use of holding an intermediate spell
-        //(like when a random spell is being generated after each round)
-        //if (spells[4] != null)
-        //{
-        //    if (mana >= spells[4].GetManaCost() && spells[4].IsReady())
-        //    {
-        //        mana -= spells[4].GetManaCost();
-        //        yield return spells[4].Cast(where, target, team);
-        //    }
-        //}
-
         yield break;
-    }
-
-    public int getPower()
-    {
-  //      Debug.Log("this part works");
-        return owner.spellPower;
-    }
-
-    public int getCurrentWave()
-    {
-        return owner.currentWave;
     }
 
     public void playSound(AudioClip clip)

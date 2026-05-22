@@ -20,7 +20,7 @@
        "speed": 7,
        "damage": 10
    },
-   { //the enemy we added
+   { 
        "name": "alpha_wolf",
        "sprite": 24,
        "hp": 50,

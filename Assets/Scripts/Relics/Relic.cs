@@ -74,6 +74,31 @@ public class Relic
 
         //ok this line below says Debug doesnt contain a definition for log wtv im dealing w this later
         //Debug.Log("Relic activated: " + name);
+
+
+        if (effect.until != null)
+        {
+            switch (effect.until)
+            {
+                case "move" :
+                    Action remove = null;
+                    remove = () =>
+                    {
+                        effect.RemoveEffect();
+                        EventBus.Instance.OnPlayerMove -= remove;
+                    };
+                    trigger.LinkUntil(remove);
+
+                break;
+
+
+                default:
+                break;
+            }
+        }
+
+
+
     }
 
     public void Deactivate()
@@ -81,7 +106,7 @@ public class Relic
         if (isActive == false) return;
         isActive = false;
         Action effectAction = () => effect.ApplyEffect();
-        trigger.UnlinkEvent(effectAction);
+        trigger.UnlinkEvent();
     }
 
     //these functions below r needed for RelicUI.cs

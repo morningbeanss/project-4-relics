@@ -26,8 +26,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
     public SpellBuilder.SpellData data;
 
     protected Spell modified; //to hold all the info of a modified spell
-    protected Dictionary<string, int> spellPowerDict = new Dictionary<string, int>();
-    protected Dictionary<string, float> spellPowerDictf = new Dictionary<string, float>();
+
 
 
     public Spell(SpellCaster owner, SpellBuilder.SpellData data)
@@ -42,10 +41,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
         this.modified = null;
 
         this.data = data;
-        spellPowerDict.Add("power", this.owner.getPower());
-        spellPowerDict.Add("wave", this.owner.getCurrentWave());
-        spellPowerDictf.Add("power", (float)this.owner.getPower());
-        spellPowerDictf.Add("wave", this.owner.getCurrentWave());
+        
     }
 
     public void WrapWithModifier(Spell modifiedSpell)
@@ -68,19 +64,19 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
     public virtual int GetManaCost()
     {
         if (modified != null) return modified.GetManaCost();
-        return RPN.Evaluate(data.mana_cost, spellPowerDict);
+        return RPN.Evaluate(data.mana_cost, GameManager.Instance.MasterVarDict);
     }
 
     public virtual int GetDamage()
     {
         if (modified != null) return modified.GetDamage();
-        return RPN.Evaluate(data.damage["amount"], spellPowerDict);
+        return RPN.Evaluate(data.damage["amount"], GameManager.Instance.MasterVarDict);
     }
 
     public virtual float GetCooldown()
     {
         if (modified != null) return modified.GetCooldown();
-        return RPN.Evaluatef(data.cooldown, spellPowerDictf);
+        return RPN.Evaluatef(data.cooldown, GameManager.Instance.MasterVarDictF);
     }
 
     public virtual int GetIcon()
@@ -147,7 +143,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
         if (modified != null) return modified.GetProjectileCount();
         if (!string.IsNullOrEmpty(data.N))
         {
-            return RPN.Evaluate(data.N, spellPowerDict);
+            return RPN.Evaluate(data.N, GameManager.Instance.MasterVarDict);
         }
         return 1; //default
     }
@@ -158,7 +154,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
         if (modified != null) return modified.GetSprayAngle();
         if (!string.IsNullOrEmpty(data.spray))
         {
-            return RPN.Evaluatef(data.spray, spellPowerDictf);
+            return RPN.Evaluatef(data.spray, GameManager.Instance.MasterVarDictF);
         }
         return 0; //default
     }
@@ -169,7 +165,7 @@ public class Spell //: MonoBehaviour //need this monobehaviour (bs english spell
         if (modified != null) return modified.GetSecondaryDamage();
         if (!string.IsNullOrEmpty(data.secondary_damage))
         {
-            return RPN.Evaluate(data.secondary_damage, spellPowerDict);
+            return RPN.Evaluate(data.secondary_damage, GameManager.Instance.MasterVarDict);
         }
         return 0; //default
     }
@@ -540,7 +536,7 @@ public class Chaos : Spell //significantly increased damage, but projectile has 
     {
         if (!string.IsNullOrEmpty(data.damage_multiplier))
         {
-            damageMultiplier = RPN.Evaluatef(data.damage_multiplier, spellPowerDictf);
+            damageMultiplier = RPN.Evaluatef(data.damage_multiplier, GameManager.Instance.MasterVarDictF);
         }
         else
         {
@@ -678,7 +674,7 @@ public class Gassy : Spell //plays sound, increased damage + cooldown + mana cos
     {
         if (!string.IsNullOrEmpty(data.mana_adder))
         {
-            manaAddition = RPN.Evaluate(data.mana_adder, spellPowerDict);
+            manaAddition = RPN.Evaluate(data.mana_adder, GameManager.Instance.MasterVarDict);
         }
         else
         {
@@ -753,7 +749,7 @@ public class Bingus : Spell //slight increased damage, decreased mana cost & coo
     {
         if (!string.IsNullOrEmpty(data.mana_adder))
         {
-            manaAddition = RPN.Evaluate(data.mana_adder, spellPowerDict);
+            manaAddition = RPN.Evaluate(data.mana_adder, GameManager.Instance.MasterVarDict);
         }
         else
         {

@@ -20,9 +20,9 @@ public class EnemySpawner : MonoBehaviour
 
     private Level level;
     private List<Level> levels; //list to hold all levels after reading them from json file
-    public static int Wave {get; private set;} //changed to public so i can use in PlayerController.cs 
+    private int Wave; //changed to public so i can use in PlayerController.cs 
     private List<Enemy> enemies;
-    private Dictionary<string, int> dict = new Dictionary<string, int>();
+
 
     int activeSpawns;
     int WavesDone; //this n ones below used in SpawnWave as post-Wave/post-game stats
@@ -43,9 +43,7 @@ public class EnemySpawner : MonoBehaviour
         //selector.GetComponent<MenuSelectorController>().spawner = this;
         //selector.GetComponent<MenuSelectorController>().SetLevel("Start");
 
-        
-
-        Wave = 0;
+        UpdateWave(0);
 
         //adding buttons
         string level_json = Resources.Load<TextAsset>("levels").text; //read json file
@@ -71,7 +69,7 @@ public class EnemySpawner : MonoBehaviour
         }
 
         
-        dict["wave"] = Wave;
+        
 
         string enemies_json = Resources.Load<TextAsset>("enemies").text;
         enemies = JsonConvert.DeserializeObject<List<Enemy>>(enemies_json);
@@ -110,6 +108,28 @@ public class EnemySpawner : MonoBehaviour
             //    Debug.Log("Waves: " + level.Waves);
             }
         }
+
+        foreach (Spawn s in level.spawns)
+        {
+            // base can affect damage, hp, or speed (in theory)
+            Enemy e = enemies.Find((e) => e.name == s.enemy);
+            Debug.Log("Enemy name " + e.name);
+            
+            if (s.hp != null)
+            {
+                s.hp = s.hp.Replace("base", e.hp.ToString());
+            }
+            if (s.damage != null)
+            {
+                s.damage = s.damage.Replace("base", e.damage.ToString());
+            }
+            if (s.speed != null)
+            {
+                s.speed = s.speed.Replace("base", e.speed.ToString());
+            }
+          
+
+        }
         //Debug.Log("Level: " + level);
         level_selector.gameObject.SetActive(false);
         // this is not nice: we should not have to be required to tell the player directly that the level is starting
@@ -117,12 +137,12 @@ public class EnemySpawner : MonoBehaviour
 
         StartCoroutine(SpawnWave());
         //Debug.Log("Starting Wave");
-        Wave++; // added by calvin
+        UpdateWave(Wave + 1);
     }
 
     public void NextWave()
     {
-        Wave++;
+        UpdateWave(Wave + 1);
         Wave_end_stats.text = "";
       //  Debug.Log("Next Wave starting");
         
@@ -185,7 +205,7 @@ public class EnemySpawner : MonoBehaviour
 
         // *** OUR CODE GOES HERE *** //
 
-        dict["wave"] = Wave; // IMPORTANT
+       
 
         activeSpawns = level.spawns.Count; // number of spawning events that are occuring
         
@@ -329,18 +349,18 @@ public class EnemySpawner : MonoBehaviour
         
         // *** WE DO TOUCH THIS *** //
         
-        dict["base"] = enemy_data.hp;
+       
         if (string.IsNullOrEmpty(spawn.hp)) {
 			// EnemyController.hp is a "Hittable", not a simple int	
 			en.hp = new Hittable(enemy_data.hp, Hittable.Team.MONSTERS, new_enemy);
 		}
 		else {
             //ik the line below is long to call RPNEvaluator, but idk, thats the only way ik how to make it work
-			int hp_value = RPN.Evaluate(spawn.hp, dict);
+			int hp_value = RPN.Evaluate(spawn.hp, GameManager.Instance.MasterVarDict);
 			en.hp = new Hittable(hp_value, Hittable.Team.MONSTERS, new_enemy);	
 		}
         
-        dict["base"] = enemy_data.damage;
+    
        	if (string.IsNullOrEmpty(spawn.damage)) {
 			
 			en.damage = enemy_data.damage;
@@ -348,16 +368,15 @@ public class EnemySpawner : MonoBehaviour
 		else {
             //the line below, it was an Evaluatef line, but that had errors
             //!! might need to be changed back idk !!!
-			en.damage = RPN.Evaluate(spawn.damage, dict);
+			en.damage = RPN.Evaluate(spawn.damage, GameManager.Instance.MasterVarDict);
 		}
 
-		dict["base"] = enemy_data.speed;
 		if (string.IsNullOrEmpty(spawn.speed)) {
 			// speed inside of enemy controller is an int
 			en.speed = enemy_data.speed;
 		}
 		else {
-			en.speed = RPN.Evaluate(spawn.speed, dict);
+			en.speed = RPN.Evaluate(spawn.speed, GameManager.Instance.MasterVarDict);
 		}
 
         GameManager.Instance.AddEnemy(new_enemy);
@@ -368,7 +387,7 @@ public class EnemySpawner : MonoBehaviour
 
         // "spawns all enemies of one type" - Markus Eger via Discord
         int spawned = 0;
-        int spawn_total = RPN.Evaluate(s.count, dict);
+        int spawn_total = RPN.Evaluate(s.count, GameManager.Instance.MasterVarDict);
 
         // this is safe because Spawn uses default values for these member variables
         List<int> sequence = s.sequence;
@@ -418,8 +437,14 @@ public class EnemySpawner : MonoBehaviour
             }
             
         }
-        //Debug.Log("Finished Spawning " + s.enemy + " Wave" +
-        //    "\nSpawn total = " + spawn_total);
+        
         activeSpawns--;
 	}
+
+    public void UpdateWave(int w)
+    {
+        Wave = w;
+        GameManager.Instance.MasterVarDict["wave"] = Wave;
+        GameManager.Instance.MasterVarDictF["wave"] = Wave;
+    }
 }

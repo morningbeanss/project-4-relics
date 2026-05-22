@@ -17,8 +17,8 @@ public class PlayerController : MonoBehaviour
     public Unit unit;
     public Player player;
     public Dictionary<string, Player> classes;
-    public Dictionary<string, int> rpnVariable = new Dictionary<string, int>();
-    public int currentWave;
+    
+  
     public int sprite;
     public int health;
     public int mana;
@@ -26,12 +26,9 @@ public class PlayerController : MonoBehaviour
     public int spellPower; //i need this in Spell.c
     public List<Relic> relics = new List<Relic>(); //this replaces ownedRelics in RelicBuilder (replacing it cuz the line "player.relics.Count-1" in RelicUIManager)
 
-    private bool moving = false;
-    private bool lastMove = false;
-
-
     public AudioSource source;
     public AudioClip clip;
+    private bool IsMoving = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -51,16 +48,16 @@ public class PlayerController : MonoBehaviour
         Debug.Log("player manaRegen = " + player.mana_regeneration);
       //  PlayerUpdate();
 
-        currentWave = EnemySpawner.Wave;
-      //  Debug.Log(currentWave);
-        rpnVariable.Add("wave", currentWave);
+    
         sprite = player.sprite;
 
-        health = RPN.Evaluate(player.health, rpnVariable);
-        mana = RPN.Evaluate(player.mana, rpnVariable);
-        manaRegen = RPN.Evaluate(player.mana_regeneration, rpnVariable);
-        spellPower = RPN.Evaluate(player.spellpower, rpnVariable);
-        speed = RPN.Evaluatef(player.speed, rpnVariable);
+        health = RPN.Evaluate(player.health, GameManager.Instance.MasterVarDict);
+        mana = RPN.Evaluate(player.mana, GameManager.Instance.MasterVarDict);
+        manaRegen = RPN.Evaluate(player.mana_regeneration, GameManager.Instance.MasterVarDict);
+
+        UpdatePower(null); // this also updates spellpower
+        
+        speed = RPN.Evaluatef(player.speed, GameManager.Instance.MasterVarDict);
 
 
         //SpellCaster(int mana, int mana_reg, Hittable.Team team)
@@ -90,16 +87,16 @@ public class PlayerController : MonoBehaviour
     {
     //    Debug.Log("made it to PlayerUpdate");
         //update all tha stuff stuff (bc wave changes values of a lot of stuff its gotta update all the time)
-        currentWave = EnemySpawner.Wave;
-   //     Debug.Log(currentWave);
-        rpnVariable["wave"] = currentWave;
+      
         sprite = player.sprite;
 
-        health = RPN.Evaluate(player.health, rpnVariable);
-        mana = RPN.Evaluate(player.mana, rpnVariable);
-        manaRegen = RPN.Evaluate(player.mana_regeneration, rpnVariable);
-        spellPower = RPN.Evaluate(player.spellpower, rpnVariable);
-        speed = RPN.Evaluatef(player.speed, rpnVariable);
+        health = RPN.Evaluate(player.health, GameManager.Instance.MasterVarDict);
+        mana = RPN.Evaluate(player.mana, GameManager.Instance.MasterVarDict);
+        manaRegen = RPN.Evaluate(player.mana_regeneration, GameManager.Instance.MasterVarDict);
+
+        UpdatePower(null);
+
+        speed = RPN.Evaluatef(player.speed, GameManager.Instance.MasterVarDict);
 
 
         hp.max_hp = health;
@@ -146,26 +143,19 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        lastMove = moving;
-        if (GetComponent<Rigidbody2D>().linearVelocity.magnitude > 0)
+
+        if (!IsMoving && unit.movement != new Vector2(0,0)) // if the player is moving 
         {
-            moving = true;
+            IsMoving = true;
+            EventBus.Instance.PlayerMove();
         }
-        else
+        else if (IsMoving && unit.movement == new Vector2(0,0))
         {
-            moving = false;
+            IsMoving = false;
+            EventBus.Instance.PlayerStill();
         }
-        if (moving != lastMove)
-        {
-            if (moving)
-            {
-                EventBus.Instance.PlayerMove();
-            }
-            else
-            {
-                EventBus.Instance.PlayerStill();
-            }
-        }
+
+        
 
     }
 
@@ -186,6 +176,8 @@ public class PlayerController : MonoBehaviour
     {
         if (GameManager.Instance.state == GameManager.GameState.PREGAME || GameManager.Instance.state == GameManager.GameState.GAMEOVER) return;
         unit.movement = value.Get<Vector2>()*speed;
+
+        
     }
 
     
@@ -199,6 +191,18 @@ public class PlayerController : MonoBehaviour
     public void dropSpell()
     {
         spellcaster.spells[spellcaster.highlightedSpell] = null;
+    }
+
+    public void UpdatePower(string power)
+    {
+        if (power != null)
+        {
+            player.spellpower = power;
+        }
+        spellPower = RPN.Evaluate(player.spellpower, GameManager.Instance.MasterVarDict);
+
+        GameManager.Instance.MasterVarDict["power"] = spellPower;
+        GameManager.Instance.MasterVarDictF["power"] = spellPower;
     }
 
 }

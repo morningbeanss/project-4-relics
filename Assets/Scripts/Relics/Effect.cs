@@ -16,16 +16,14 @@ public abstract class Effect
     public string type;
     public string amount;
     public string until;
+    public string DefaultParameter;
     public Effect(EffectData data)
     {
         description = data.description;
         type = data.type;
         amount = data.amount;
         until = data.until;
-    }
-
-    public Dictionary<string, int> effectVar = new Dictionary<string, int>(); //need this for RPN evaluations
-
+    }  
     public abstract void ApplyEffect();
     public virtual void RemoveEffect() {}
 }
@@ -36,8 +34,12 @@ public class GainManaEffect : Effect
     //1: whenever u take damage, u gain 5 mana
     //2: when u kill an enemy, u gain 10 mana
 
+
     public GainManaEffect(EffectData data) :
-    base(data) {}
+    base(data)
+    {
+        
+    }
 
     public override void ApplyEffect()
     {
@@ -45,12 +47,13 @@ public class GainManaEffect : Effect
         var player = GameManager.Instance.player.GetComponent<PlayerController>();
         if (player != null)
         {
-            //i think we only need ints from RPN.Evaluate (not floats)
-            //the dictionary should also only need "wave" variable (so far)
-            effectVar["wave"] = player.currentWave;
-            player.mana += RPN.Evaluate(amount, effectVar);
+            // this should work because mana is mostly just a variable
+           
+            player.mana += RPN.Evaluate(amount, GameManager.Instance.MasterVarDict);
         }
     }
+
+    
 }
 
 public class GainSpellPowerEffect : Effect
@@ -60,16 +63,25 @@ public class GainSpellPowerEffect : Effect
     //2: whenever u don't move for 3 seconds, you gain 10 spellpower (+5/wave). effect ends when u move again
 
     public GainSpellPowerEffect(EffectData data) :
-    base(data) {}
+    base(data)
+    {
+        DefaultParameter = GameManager.Instance.player.GetComponent<PlayerController>().player.spellpower;
+    }
 
     public override void ApplyEffect()
     {
         var player = GameManager.Instance.player.GetComponent<PlayerController>();
         if (player != null)
         {
-            effectVar["wave"] = player.currentWave;
-            player.spellPower += RPN.Evaluate(amount, effectVar); 
+            string NewPower = player.player.spellpower + " " + amount + " +";
+            player.UpdatePower(NewPower);
         }
+    }
+
+    public override void RemoveEffect()
+    {
+        var player = GameManager.Instance.player.GetComponent<PlayerController>();
+        player.UpdatePower(DefaultParameter);
     }
 }
 
