@@ -13,19 +13,16 @@ public class RewardScreenManager : MonoBehaviour
     public PlayerController player;
     bool isSpellCreated = false;
     Spell spell;
+    public TextMeshProUGUI spellDesc;
     
-    //realized the teacher example didnt actually use relicUI on reward screen display,
-    //so im trying to add each relic's info w/ objects i made in the unity editor
-    //old stuff
     public List <Relic> tempRelics = new List<Relic>();
-    //public List <RelicUI> relicUI = new List<RelicUI>();
-
-    //new stuff
     bool allRelicsCreated = false;
     public List <GameObject> relicChoices = new List<GameObject>();
     public List <Image> relicIcon = new List<Image>();
     public List <TextMeshProUGUI> relicName = new List<TextMeshProUGUI>();
     public List <TextMeshProUGUI> relicDescription = new List<TextMeshProUGUI>();
+    public List<Button> relicButton = new List<Button>();
+    public bool alreadyTookARelic = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -58,6 +55,11 @@ public class RewardScreenManager : MonoBehaviour
                 {
                     allRelicsCreated = false;
                 }
+                if (alreadyTookARelic)
+                {
+                    alreadyTookARelic = false;
+                }
+                tempRelics.Clear();
                 rewardUI.SetActive(false);
             break;
 
@@ -66,19 +68,22 @@ public class RewardScreenManager : MonoBehaviour
                 if (!isSpellCreated)
                 {
                     spell = SpellBuilder.Build(player.spellcaster);
+                    //spell = SpellBuilder.Build(player.spellcaster, "Arcane Bolt");
+                    //SpellBuilder.SpellData bigAndGassy = SpellBuilder.modifierSpells[6];
+                    //spell = SpellBuilder.ApplyModifier(player.spellcaster, bigAndGassy, spell);
                     Debug.Log("new spell created");
                     isSpellCreated = true;
 
                     // update spellUI
                     spellUI.SetSpell(spell, 0);
-
+                    spellDesc.text = spell.GetDescription();
                 }
-
+                
                 //make smth like if wave != 0 && wave % 3 == 0 (so this stuff only shows up every 3 rounds)
                 //add smth where game wont break if there aren't three diff relics to display (like it can display two or one as we begin to run out of options)
                 if (!allRelicsCreated)
                 {
-                    SelectThreeRelics();
+                    RandomlySelectThreeRelics();
                     //after it all runs, update variable
                     allRelicsCreated = true; //might need a condition check before setting dis?
                     Debug.Log("num relics created: " + tempRelics.Count);
@@ -114,9 +119,10 @@ public class RewardScreenManager : MonoBehaviour
         
     }
 
-    public void SelectThreeRelics()
+    //teacher example of reward screen relics didn't seem to use relicUI, i liked how that looked so i set it up here (clr)
+    public void RandomlySelectThreeRelics()
     {
-        tempRelics.Clear(); //make sure list is empty
+        tempRelics.Clear(); //double making sure list is empty b4 refilling
         for (int i = 0; i < 3; i++) //3 relics need to be displayed to player for them to choose from
         {
             Relic tempRelic = RelicBuilder.Build();
@@ -145,7 +151,7 @@ public class RewardScreenManager : MonoBehaviour
             if (tempRelic != null)
             {
                 tempRelics.Add(tempRelic); //add completed relic to temporary holder
-                //set icon, name, & description texts on Reward Screen
+                //set up icon, name, & description texts on Reward Screen (i think buttons don't need to be set)
                 if (relicIcon[i] != null)
                 {
                     GameManager.Instance.relicIconManager.PlaceSprite(tempRelic.sprite, relicIcon[i].GetComponent<Image>());
@@ -163,6 +169,29 @@ public class RewardScreenManager : MonoBehaviour
             {
                 Debug.Log("ran out of relics they null ash");
                 break;
+            }
+        }
+    }
+
+    public void TakeRelic(int chosenRelicIndex)
+    {
+        if (alreadyTookARelic == true)
+        {
+            Debug.Log("You have already chosen a relic! You only may pick 1 at a time.");
+        }
+        else
+        {
+            if (chosenRelicIndex < tempRelics.Count && tempRelics[chosenRelicIndex] != null)
+            {
+                Relic selectedRelic = tempRelics[chosenRelicIndex];
+                //double checking player doesn't have it b4 it's added
+                if (!player.relics.Contains(selectedRelic))
+                {
+                    player.relics.Add(selectedRelic);
+                    selectedRelic.Activate();
+                    alreadyTookARelic = true;
+                    Debug.Log("player selected: " + selectedRelic.name);
+                }
             }
         }
     }

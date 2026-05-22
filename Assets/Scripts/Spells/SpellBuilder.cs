@@ -13,7 +13,7 @@ public static class SpellBuilder
 {
  
     static List<SpellData> baseSpells = new List<SpellData>(); //keep track of all the base spell names
-    static List<SpellData> modifierSpells = new List<SpellData>(); //keep track of all modifier spell names
+    static public List<SpellData> modifierSpells = new List<SpellData>(); //keep track of all modifier spell names
 
     public struct SpellData
     {
@@ -105,7 +105,7 @@ public static class SpellBuilder
 
     //json file is loaded, but stuff to actually make spells combine n whatnot needs to be written
 
-    static Spell ApplyModifier(SpellCaster owner, SpellBuilder.SpellData modifier, Spell baseSpell)
+    static public Spell ApplyModifier(SpellCaster owner, SpellBuilder.SpellData modifier, Spell baseSpell)
     {
         switch (modifier.name)
         {

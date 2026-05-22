@@ -564,7 +564,7 @@ public class Chaos : Spell //significantly increased damage, but projectile has 
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            this.OnHit  // this is the key — registers the wrapper's OnHit
+            modified.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
@@ -624,7 +624,7 @@ public class Homing : Spell //homing projectile; decreased damage & increased ma
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            this.OnHit  // this is the key — registers the wrapper's OnHit
+            modified.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
@@ -645,8 +645,6 @@ public class Gassy : Spell //plays sound, increased damage + cooldown + mana cos
         this.WrapWithModifier(baseSpell);
 
     }
-
-    //FIGURE OUT HOW TO PLAY SOUND !!!!!!  UNGA BUNGA !!!!!!!@!!
 
     public override string GetName()
     {
@@ -706,7 +704,7 @@ public class Gassy : Spell //plays sound, increased damage + cooldown + mana cos
             modified.GetTrajectory(),
             where, target - where,
             modified.GetSpeed(),
-            this.OnHit  // this is the key — registers the wrapper's OnHit
+            modified.OnHit  // this is the key — registers the wrapper's OnHit
         );
         yield return new WaitForEndOfFrame();
     }
