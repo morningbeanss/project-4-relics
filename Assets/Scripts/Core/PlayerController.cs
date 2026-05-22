@@ -98,9 +98,9 @@ public class PlayerController : MonoBehaviour
 
         speed = RPN.Evaluatef(player.speed, GameManager.Instance.MasterVarDict);
 
-
+        float ratio = (float)(health / hp.max_hp);
         hp.max_hp = health;
-        hp.hp = health;
+        hp.hp = (int)(hp.hp * ratio);
 
         spellcaster.max_mana = mana;
         spellcaster.mana = mana;
