@@ -175,8 +175,11 @@ public class PlayerController : MonoBehaviour
 
      //   source.PlayOneShot(clip);
         // switch to Play() and make it a coroutine or smth and then only let spellcaster cast when it's done
-
-        StartCoroutine(spellcaster.Cast(transform.position, mouseWorld));
+        if (GameManager.Instance.state == GameManager.GameState.INWAVE)
+        {
+            StartCoroutine(spellcaster.Cast(transform.position, mouseWorld));
+        }
+        
     }
 
     void OnMove(InputValue value)

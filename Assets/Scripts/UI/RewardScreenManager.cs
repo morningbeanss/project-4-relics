@@ -91,6 +91,10 @@ public class RewardScreenManager : MonoBehaviour
                     allRelicsCreated = true; //might need a condition check before setting dis?
                     Debug.Log("num relics created: " + tempRelics.Count);
                 }
+                else
+                {
+                    
+                }
                 
                 else
                 { //if not generating relics this round, just hide all of them
