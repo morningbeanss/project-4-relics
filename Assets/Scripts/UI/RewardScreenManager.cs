@@ -24,10 +24,14 @@ public class RewardScreenManager : MonoBehaviour
     public List<Button> relicButton = new List<Button>();
     public bool alreadyTookARelic = false;
 
+    public RelicUIManager reuimanager;
+    //public List<RelicUI> relicUiObjHolder = new List<RelicUI>();
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       
+        
     }
 
     // Update is called once per frame
@@ -88,7 +92,26 @@ public class RewardScreenManager : MonoBehaviour
                     Debug.Log("num relics created: " + tempRelics.Count);
                 }
                 
-                rewardUI.SetActive(true);
+                else
+                { //if not generating relics this round, just hide all of them
+                    relicIcon[0].gameObject.SetActive(false);
+                    relicName[0].gameObject.SetActive(false);
+                    relicDescription[0].gameObject.SetActive(false);
+                    relicButton[0].gameObject.SetActive(false);
+
+                    relicIcon[1].gameObject.SetActive(false);
+                    relicName[1].gameObject.SetActive(false);
+                    relicDescription[1].gameObject.SetActive(false);
+                    relicButton[1].gameObject.SetActive(false);
+
+                    relicIcon[2].gameObject.SetActive(false);
+                    relicName[2].gameObject.SetActive(false);
+                    relicDescription[2].gameObject.SetActive(false);
+                    relicButton[2].gameObject.SetActive(false);
+                }
+                
+
+                    rewardUI.SetActive(true);
             break;
 
             default:
@@ -134,6 +157,7 @@ public class RewardScreenManager : MonoBehaviour
                 relicIcon[i].gameObject.SetActive(false);
                 relicName[i].gameObject.SetActive(false);
                 relicDescription[i].gameObject.SetActive(false);
+                relicButton[i].gameObject.SetActive(false);
                 break; //Build() will return null if no available/unused relics
             }
 
@@ -170,6 +194,11 @@ public class RewardScreenManager : MonoBehaviour
                     
                     relicDescription[i].text = tempRelic.trigger.description + " " + tempRelic.effect.description;
                 }
+                relicIcon[i].gameObject.SetActive(true);
+                relicName[i].gameObject.SetActive(true);
+                relicDescription[i].gameObject.SetActive(true);
+                relicButton[i].gameObject.SetActive(true);
+                //relicUiObjHolder.Add(tempRelic);
             }
             else
             {
@@ -195,6 +224,7 @@ public class RewardScreenManager : MonoBehaviour
                 {
                     player.relics.Add(selectedRelic);
                     selectedRelic.Activate();
+                    reuimanager.OnRelicPickup(selectedRelic);
                     alreadyTookARelic = true;
                     Debug.Log("player selected: " + selectedRelic.name);
                 }
