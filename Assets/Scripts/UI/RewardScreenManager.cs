@@ -14,13 +14,13 @@ public class RewardScreenManager : MonoBehaviour
     bool isSpellCreated = false;
     Spell spell;
     public TextMeshProUGUI spellDesc;
-    
-    public List <Relic> tempRelics = new List<Relic>();
+
+    public List<Relic> tempRelics = new List<Relic>();
     bool allRelicsCreated = false;
-    public List <GameObject> relicChoices = new List<GameObject>();
-    public List <Image> relicIcon = new List<Image>();
-    public List <TextMeshProUGUI> relicName = new List<TextMeshProUGUI>();
-    public List <TextMeshProUGUI> relicDescription = new List<TextMeshProUGUI>();
+    public List<GameObject> relicChoices = new List<GameObject>();
+    public List<Image> relicIcon = new List<Image>();
+    public List<TextMeshProUGUI> relicName = new List<TextMeshProUGUI>();
+    public List<TextMeshProUGUI> relicDescription = new List<TextMeshProUGUI>();
     public List<Button> relicButton = new List<Button>();
     public bool alreadyTookARelic = false;
 
@@ -31,7 +31,7 @@ public class RewardScreenManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -40,7 +40,7 @@ public class RewardScreenManager : MonoBehaviour
         if (GameManager.Instance.state == GameManager.GameState.WAVEEND)
         {
             rewardUI.SetActive(true); // already is setting spellUI active
-            
+
         }
         else
         {
@@ -65,10 +65,10 @@ public class RewardScreenManager : MonoBehaviour
                 }
                 tempRelics.Clear();
                 rewardUI.SetActive(false);
-            break;
+                break;
 
             case GameManager.GameState.WAVEEND:
-                
+
                 if (!isSpellCreated)
                 {
                     spell = SpellBuilder.Build(player.spellcaster);
@@ -91,11 +91,9 @@ public class RewardScreenManager : MonoBehaviour
                     allRelicsCreated = true; //might need a condition check before setting dis?
                     Debug.Log("num relics created: " + tempRelics.Count);
                 }
-                else
-                {
-                    
-                }
                 
+
+
                 else
                 { //if not generating relics this round, just hide all of them
                     relicIcon[0].gameObject.SetActive(false);
@@ -113,20 +111,20 @@ public class RewardScreenManager : MonoBehaviour
                     relicDescription[2].gameObject.SetActive(false);
                     relicButton[2].gameObject.SetActive(false);
                 }
-                
 
-                    rewardUI.SetActive(true);
-            break;
+
+                rewardUI.SetActive(true);
+                break;
 
             default:
                 rewardUI.SetActive(false);
-            break;
+                break;
         }
     }
 
     public void AcceptSpell()
     {
-        
+
         int i;
         bool spellAvailable = false;
         for (i = 0; i < player.spellcaster.spells.Length - 1; i++)
@@ -144,7 +142,7 @@ public class RewardScreenManager : MonoBehaviour
             spell = null;
             //spellUI.gameObject.SetActive(false);
         }
-        
+
     }
 
     //teacher example of reward screen relics didn't seem to use relicUI, i liked how that looked so i set it up here (clr)
@@ -195,7 +193,7 @@ public class RewardScreenManager : MonoBehaviour
                 }
                 if (relicDescription[i] != null)
                 {
-                    
+
                     relicDescription[i].text = tempRelic.trigger.description + " " + tempRelic.effect.description;
                 }
                 relicIcon[i].gameObject.SetActive(true);
